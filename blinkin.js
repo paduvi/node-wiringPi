@@ -1,7 +1,7 @@
 /**
  * Created by chotoxautinh on 6/17/17.
  */
-var wiringpi = require('./index');
+var wiringpi = require('./index')();
 
 wiringpi.wiring_pi_setup();
 
