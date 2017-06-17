@@ -3,6 +3,7 @@
 
 namespace demo {
 
+using v8::Exception;
 using v8::Function;
 using v8::FunctionCallbackInfo;
 using v8::FunctionTemplate;
