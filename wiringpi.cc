@@ -12,17 +12,44 @@ using v8::Object;
 using v8::String;
 using v8::Value;
 
+void WiringPi_Setup(const FunctionCallbackInfo<Value>& args){
+    if( -1 == wiringPiSetup() ) {
+        isolate->ThrowException(Exception::TypeError(
+                String::NewFromUtf8(isolate, "Bad argument type")));
+        return;
+    }
+}
+
 void Pin_Mode(const FunctionCallbackInfo<Value>& args) {
-//  Isolate* isolate = args.GetIsolate();
-//  args.GetReturnValue().Set(String::NewFromUtf8(isolate, "hello world"));
-  pinMode( args[0]->NumberValue(), args[1]->NumberValue() );
+
+    if( args.Length() != 2 ) {
+        isolate->ThrowException(Exception::TypeError(
+                String::NewFromUtf8(isolate, "Wrong number of arguments")));
+            return;
+    }
+
+    if( !args[0]->IsNumber() || !args[1]->IsNumber() ) {
+        isolate->ThrowException(Exception::TypeError(
+                String::NewFromUtf8(isolate, "Wrong arguments")));
+            return;
+    }
+    pinMode( args[0]->NumberValue(), args[1]->NumberValue() );
 }
 
 
 void Digital_Write(const FunctionCallbackInfo<Value>& args) {
-//  Isolate* isolate = args.GetIsolate();
-//  args.GetReturnValue().Set(String::NewFromUtf8(isolate, "hello world"));
-  digitalWrite( args[0]->NumberValue(), args[1]->NumberValue() );
+    if( args.Length() != 2 ) {
+            isolate->ThrowException(Exception::TypeError(
+                    String::NewFromUtf8(isolate, "Wrong number of arguments")));
+                return;
+        }
+
+    if( !args[0]->IsNumber() || !args[1]->IsNumber() ) {
+            isolate->ThrowException(Exception::TypeError(
+                    String::NewFromUtf8(isolate, "Wrong arguments")));
+                return;
+    }
+    digitalWrite( args[0]->NumberValue(), args[1]->NumberValue() );
 }
 
 void CreateObject(const FunctionCallbackInfo<Value>& args) {
@@ -35,6 +62,7 @@ void CreateObject(const FunctionCallbackInfo<Value>& args) {
   obj->Set(String::NewFromUtf8(isolate, "LOW"), Number::New(isolate, LOW));
   obj->Set(String::NewFromUtf8(isolate, "OUTPUT"), Number::New(isolate, OUTPUT));
 
+  obj->Set(String::NewFromUtf8(isolate, "wiring_pi_setup"), FunctionTemplate::New(isolate, WiringPi_Setup)->GetFunction());
   obj->Set(String::NewFromUtf8(isolate, "pin_mode"), FunctionTemplate::New(isolate, Pin_Mode)->GetFunction());
   obj->Set(String::NewFromUtf8(isolate, "digital_write"), FunctionTemplate::New(isolate, Digital_Write)->GetFunction());
 
@@ -42,11 +70,6 @@ void CreateObject(const FunctionCallbackInfo<Value>& args) {
 }
 
 void Init(Local<Object> exports, Local<Object> module) {
-    if( -1 == wiringPiSetup() ) {
-        ThrowException( Exception::TypeError( String::New( "Bad argument type" ) ) );
-        return;
-    }
-
     NODE_SET_METHOD(module, "exports", CreateObject);
 }
 

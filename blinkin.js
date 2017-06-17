@@ -3,6 +3,8 @@
  */
 var wiringpi = require('./index');
 
+wiringpi.wiring_pi_setup();
+
 wiringpi.pin_mode(7, wiringpi.OUTPUT);
 
 var HIGH = wiringpi.HIGH;
