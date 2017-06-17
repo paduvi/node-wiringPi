@@ -15,6 +15,8 @@ using v8::String;
 using v8::Value;
 
 void WiringPi_Setup(const FunctionCallbackInfo<Value>& args){
+    Isolate* isolate = args.GetIsolate();
+
     if( -1 == wiringPiSetup() ) {
         isolate->ThrowException(Exception::TypeError(
                 String::NewFromUtf8(isolate, "Bad argument type")));
@@ -23,6 +25,7 @@ void WiringPi_Setup(const FunctionCallbackInfo<Value>& args){
 }
 
 void Pin_Mode(const FunctionCallbackInfo<Value>& args) {
+    Isolate* isolate = args.GetIsolate();
 
     if( args.Length() != 2 ) {
         isolate->ThrowException(Exception::TypeError(
@@ -40,6 +43,8 @@ void Pin_Mode(const FunctionCallbackInfo<Value>& args) {
 
 
 void Digital_Write(const FunctionCallbackInfo<Value>& args) {
+    Isolate* isolate = args.GetIsolate();
+
     if( args.Length() != 2 ) {
             isolate->ThrowException(Exception::TypeError(
                     String::NewFromUtf8(isolate, "Wrong number of arguments")));
