@@ -83,10 +83,10 @@ void PWM_Write(const FunctionCallbackInfo<Value>& args){
         return;
     }
 
-    if( ( args[0]->NumberValue() < 0 ) || ( args[0]->NumberValue() >= NUM_PINS ) ) {
-        isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Index out of bounds")));
-        return;
-    }
+//    if( ( args[0]->NumberValue() < 0 ) || ( args[0]->NumberValue() >= NUM_PINS ) ) {
+//        isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Index out of bounds")));
+//        return;
+//    }
 
     pwmWrite( args[0]->NumberValue(), args[1]->NumberValue() );
 }
