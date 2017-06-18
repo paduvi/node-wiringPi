@@ -111,6 +111,8 @@ Local<Object> Value_Constant(){
 }
 
 void Init(Local<Object> exports, Local<Object> module) {
+    Isolate* isolate = Isolate::GetCurrent();
+
     NODE_SET_METHOD(exports, "getNumPins", Get_Num_Pins);
     NODE_SET_METHOD(exports, "setup", WiringPi_Setup);
     NODE_SET_METHOD(exports, "pinMode", Pin_Mode);
