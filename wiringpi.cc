@@ -13,6 +13,8 @@ using v8::String;
 using v8::Value;
 
 void Get_Num_Pins(const FunctionCallbackInfo<Value>& args) {
+    Isolate* isolate = args.GetIsolate();
+
     args.GetReturnValue().Set(Number::New(isolate, NUM_PINS));
 }
 
