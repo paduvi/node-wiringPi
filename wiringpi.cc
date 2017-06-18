@@ -70,6 +70,27 @@ void Digital_Write(const FunctionCallbackInfo<Value>& args) {
     digitalWrite( args[0]->NumberValue(), args[1]->NumberValue() );
 }
 
+void PWM_Write(const FunctionCallbackInfo<Value>& args){
+    Isolate* isolate = args.GetIsolate();
+
+    if( args.Length() != 2 ) {
+        isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Wrong number of arguments")));
+        return;
+    }
+
+    if( !args[0]->IsNumber() || !args[1]->IsNumber() ) {
+        isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Bad argument")));
+        return;
+    }
+
+    if( ( args[0]->NumberValue() < 0 ) || ( args[0]->NumberValue() >= NUM_PINS ) ) {
+        isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Index out of bounds")));
+        return;
+    }
+
+    pwmWrite( args[0]->NumberValue(), args[1]->NumberValue() );
+}
+
 void Digital_Read(const FunctionCallbackInfo<Value>& args) {
     Isolate* isolate = args.GetIsolate();
 
@@ -96,6 +117,7 @@ Local<Object> Mode_Constant(){
     Local<Object> obj = Object::New(isolate);
     
     obj->Set(String::NewFromUtf8(isolate, "OUTPUT"), Number::New(isolate, OUTPUT));
+    obj->Set(String::NewFromUtf8(isolate, "PWM_OUTPUT"), Number::New(isolate, PWM_OUTPUT));
     obj->Set(String::NewFromUtf8(isolate, "INPUT"), Number::New(isolate, INPUT));
     
     return obj;
@@ -120,6 +142,7 @@ void Init(Local<Object> exports, Local<Object> module) {
     NODE_SET_METHOD(exports, "pinMode", Pin_Mode);
     NODE_SET_METHOD(exports, "digitalWrite", Digital_Write);
     NODE_SET_METHOD(exports, "digitalRead", Digital_Read);
+    NODE_SET_METHOD(exports, "pwmWrite", PWM_Write);
 
     exports->Set(String::NewFromUtf8(isolate, "mode"), Mode_Constant());
     exports->Set(String::NewFromUtf8(isolate, "value"), Value_Constant());
