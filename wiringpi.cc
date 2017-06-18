@@ -68,6 +68,27 @@ void Digital_Write(const FunctionCallbackInfo<Value>& args) {
     digitalWrite( args[0]->NumberValue(), args[1]->NumberValue() );
 }
 
+void Digital_Read(const FunctionCallbackInfo<Value>& args) {
+    Isolate* isolate = args.GetIsolate();
+
+    if( args.Length() != 1 ) {
+        isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Wrong number of arguments")));
+        return;
+    }
+
+    if( !args[0]->IsNumber() ) {
+        isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Bad argument")));
+        return;
+    }
+
+    if( ( args[0]->NumberValue() < 0 ) || ( args[0]->NumberValue() >= NUM_PINS ) ) {
+        isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Index out of bounds")));
+        return;
+    }
+
+    args.GetReturnValue().Set(Number::New(isolate, digitalRead(args[0]->NumberValue())));
+}
+
 Local<Object> Mode_Constant(){
     Isolate* isolate = Isolate::GetCurrent();
     Local<Object> obj = Object::New(isolate);
@@ -94,7 +115,8 @@ void Init(Local<Object> exports, Local<Object> module) {
     NODE_SET_METHOD(exports, "setup", WiringPi_Setup);
     NODE_SET_METHOD(exports, "pinMode", Pin_Mode);
     NODE_SET_METHOD(exports, "digitalWrite", Digital_Write);
-    
+    NODE_SET_METHOD(exports, "digitalRead", Digital_Read);
+
     exports->Set(String::NewFromUtf8(isolate, "mode"), Mode_Constant());
     exports->Set(String::NewFromUtf8(isolate, "value"), Value_Constant());
 }
