@@ -8,6 +8,8 @@ wpi.setup();
 wpi.pinMode(33, wpi.mode.PWM_OUTPUT);
 wpi.pinMode(1, wpi.mode.INPUT);
 
+const {HIGH} = wpi.value;
+
 console.log('Started!');
 
 var value = 0;
