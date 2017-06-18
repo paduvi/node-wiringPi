@@ -12,12 +12,6 @@ using v8::Object;
 using v8::String;
 using v8::Value;
 
-void Get_Num_Pins(const FunctionCallbackInfo<Value>& args) {
-    Isolate* isolate = args.GetIsolate();
-
-    args.GetReturnValue().Set(Number::New(isolate, NUM_PINS));
-}
-
 void WiringPi_Setup(const FunctionCallbackInfo<Value>& args){
     Isolate* isolate = args.GetIsolate();
     
@@ -40,11 +34,11 @@ void Pin_Mode(const FunctionCallbackInfo<Value>& args) {
         return;
     }
     
-//    if( ( args[0]->NumberValue() < 0 ) || ( args[0]->NumberValue() >= NUM_PINS ) ) {
-//        isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Index out of bounds")));
-//        return;
-//    }
-    
+    if( args[0]->NumberValue() < 0 ) {
+        isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Index out of bounds")));
+        return;
+    }
+
     pinMode( args[0]->NumberValue(), args[1]->NumberValue() );
 }
 
@@ -61,12 +55,12 @@ void Digital_Write(const FunctionCallbackInfo<Value>& args) {
         isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Bad argument")));
         return;
     }
-    
-    if( ( args[0]->NumberValue() < 0 ) || ( args[0]->NumberValue() >= NUM_PINS ) ) {
+
+    if( args[0]->NumberValue() < 0 ) {
         isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Index out of bounds")));
         return;
     }
-    
+
     digitalWrite( args[0]->NumberValue(), args[1]->NumberValue() );
 }
 
@@ -83,10 +77,10 @@ void PWM_Write(const FunctionCallbackInfo<Value>& args){
         return;
     }
 
-//    if( ( args[0]->NumberValue() < 0 ) || ( args[0]->NumberValue() >= NUM_PINS ) ) {
-//        isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Index out of bounds")));
-//        return;
-//    }
+    if( args[0]->NumberValue() < 0 ) {
+        isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Index out of bounds")));
+        return;
+    }
 
     pwmWrite( args[0]->NumberValue(), args[1]->NumberValue() );
 }
@@ -104,7 +98,7 @@ void Digital_Read(const FunctionCallbackInfo<Value>& args) {
         return;
     }
 
-    if( ( args[0]->NumberValue() < 0 ) || ( args[0]->NumberValue() >= NUM_PINS ) ) {
+    if( args[0]->NumberValue() < 0 ) {
         isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Index out of bounds")));
         return;
     }
@@ -117,9 +111,13 @@ Local<Object> Mode_Constant(){
     Local<Object> obj = Object::New(isolate);
     
     obj->Set(String::NewFromUtf8(isolate, "OUTPUT"), Number::New(isolate, OUTPUT));
-    obj->Set(String::NewFromUtf8(isolate, "PWM_OUTPUT"), Number::New(isolate, PWM_OUTPUT));
     obj->Set(String::NewFromUtf8(isolate, "INPUT"), Number::New(isolate, INPUT));
-    
+    obj->Set(String::NewFromUtf8(isolate, "PWM_OUTPUT"), Number::New(isolate, PWM_OUTPUT));
+    obj->Set(String::NewFromUtf8(isolate, "GPIO_CLOCK"), Number::New(isolate, GPIO_CLOCK));
+    obj->Set(String::NewFromUtf8(isolate, "SOFT_PWM_OUTPUT"), Number::New(isolate, SOFT_PWM_OUTPUT));
+    obj->Set(String::NewFromUtf8(isolate, "SOFT_TONE_OUTPUT"), Number::New(isolate, SOFT_TONE_OUTPUT));
+    obj->Set(String::NewFromUtf8(isolate, "PWM_TONE_OUTPUT"), Number::New(isolate, PWM_TONE_OUTPUT));
+
     return obj;
 }
 
@@ -137,7 +135,6 @@ Local<Object> Value_Constant(){
 void Init(Local<Object> exports, Local<Object> module) {
     Isolate* isolate = Isolate::GetCurrent();
 
-    NODE_SET_METHOD(exports, "getNumPins", Get_Num_Pins);
     NODE_SET_METHOD(exports, "setup", WiringPi_Setup);
     NODE_SET_METHOD(exports, "pinMode", Pin_Mode);
     NODE_SET_METHOD(exports, "digitalWrite", Digital_Write);

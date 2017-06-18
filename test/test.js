@@ -3,6 +3,9 @@
  */
 var wpi = require('../index');
 
-wpi.setup();
-
-console.log(wpi.getNumPins());
+try {
+    wpi.setup();
+    console.log('OK');
+} catch (err) {
+    console.error('Err', err);
+}

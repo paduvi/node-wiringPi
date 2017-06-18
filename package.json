@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "node test/blinkin.js",
-    "install": "node-gyp rebuild"
+    "install": "node-gyp configure rebuild"
   },
   "author": "",
   "license": "ISC",
