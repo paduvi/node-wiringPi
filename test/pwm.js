@@ -17,7 +17,7 @@ var value = 0;
 setInterval(function () {
     const isLedOn = wpi.digitalRead(1);
     if (isLedOn == HIGH) {
-        value += (1024 / 128) % 1024;
+        value = (value + 1024 / 128) % 1024;
     }
     wpi.pwmWrite(33, value);
     console.log('Value', value);
