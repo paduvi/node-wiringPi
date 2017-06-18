@@ -1,6 +1,8 @@
 /**
  * Created by chotoxautinh on 6/17/17.
  */
-var wiringpi = require('../index');
+var wpi = require('../index');
 
-console.log(Object.keys(wiringpi));
+wpi.setup();
+
+console.log(wpi.getNumPins());
